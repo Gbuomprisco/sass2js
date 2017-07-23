@@ -1,14 +1,14 @@
-import * as v8 from 'v8';
 import { loader } from "webpack";
 import * as camelcase from 'camelcase';
 
-import { compileToSass } from './compile';
+import { compileToSass, CompiledSassResult } from './compile';
 import { SELECTOR_REGEX, PROP_REGEX } from './regexes';
 import { cleanValue, isTruthy, split } from './helpers';
 import extract from './extractor';
 
 /**
  * @name loader
+ * @description enables webpack to require files using sass2js
  * @param source
  */
 export = function loader(this: loader.LoaderContext, source: string) : void {
@@ -16,7 +16,7 @@ export = function loader(this: loader.LoaderContext, source: string) : void {
 
     const callback = this.async();
 
-    compile(source, (value: object) => {
+    sass2js(source, (value: object) => {
         const result = getExportString.call(this, value);
 
         callback(null, result);
@@ -24,28 +24,29 @@ export = function loader(this: loader.LoaderContext, source: string) : void {
 }
 
 /**
- * @name compile
+ * @name sass2js
  * @param source 
  * @param callback 
  */
-function compile(source: string, callback: (value: object) => void): void {
+function sass2js(source: string, callback: (value: object) => void): void {
     const extracted = extract(source);
 
-    compileToSass(extracted, (result: {text: string, status: number, formatted: string}) => {
-        if (result.status === 1) {
-            throw new Error(result.formatted);
+    compileToSass(extracted, (compiled: CompiledSassResult) => {
+        if (compiled.status === 1) {
+            throw new Error(compiled.formatted);
         }
-        
-        const value = split(result.text)
-            .map(line => {
-                const name = line.match(SELECTOR_REGEX)[1];
-                const value = cleanValue(line.match(PROP_REGEX)[1]);
 
-                return {[camelcase(name)]: value};
-            })
-            .reduce((acc, value) => ({...acc, ...value}));
+        const mapper = (line: string): object => {
+            const name = line.match(SELECTOR_REGEX)[1];
+            const value = cleanValue(line.match(PROP_REGEX)[1]);
 
-        callback(value);
+            return {[camelcase(name)]: value};
+        };
+
+        const reducer = (acc, value): object => ({...acc, ...value});
+        const result = split(compiled.text).map(mapper).reduce(reducer);
+
+        callback(result);
     });
 }
 
