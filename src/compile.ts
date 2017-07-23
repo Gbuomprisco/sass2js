@@ -11,6 +11,20 @@ Sass.options({
     style: Sass.style.compact
 });
 
-export function compileToSass(scss: string, callback): CompiledSassResult {
-    return Sass.compile(scss, callback);
+/**
+ * @name compileToSass
+ * @param scss
+ */
+export function compileToSass(scss: string): Promise<string> {
+    const promise = (resolve, reject) => {
+        Sass.compile(scss, (result: CompiledSassResult) => {
+             if (result.status === 1) {
+                reject(result.formatted);
+            }
+
+            resolve(result.text);
+        });
+    };
+
+    return new Promise(promise);
 };

@@ -3,10 +3,12 @@ import { REGEX } from './regexes';
 import * as resolve from 'sass-import-resolve';
 import { readFileSync, existsSync } from 'fs';
 
-function resolveImports(source: string): string {
-    const imports = resolve('file.scss', source) as string[];
-    
-    return imports
+/**
+ * @name resolveImports
+ * @param source 
+ */
+function resolveImports(source: string): string {  
+    return resolve('file.scss', source)
         .map(path => path.replace(/\\/g, ''))
         .map(openFile)
         .filter(isTruthy)
@@ -19,17 +21,19 @@ function resolveImports(source: string): string {
  * @param source 
  */
 export default function extract(source: string): string {
-    const content = resolveImports(source);
+    const imports = resolveImports(source);
 
-    return split(content)
+    const reducer = (acc: string, match: string[]): string => {
+        const name = match[1];
+        const value = cleanDefault(match[2]);
+        
+        return acc + createSelector(name, value);
+    };
+
+    return split(imports)
         .map(line => line.match(REGEX))
         .filter(isTruthy)
-        .reduce((acc: string, match: string[]) => {
-            const name = match[1];
-            const value = cleanDefault(match[2]);
-            
-            return acc + createSelector(name, value);
-        }, '');
+        .reduce(reducer, '');
 }
 
 /**
@@ -43,9 +47,8 @@ function createSelector(name: string, value: string): string {
 
 /**
  * @name openFile
+ * @param path
  */
-function openFile(fileName: string): string {
-    if (existsSync(fileName)) {
-        return readFileSync(fileName, {encoding : 'utf8'});
-    }
+function openFile(path: string): string {
+    return existsSync(path) ? readFileSync(path, {encoding : 'utf8'}) : undefined;
 }

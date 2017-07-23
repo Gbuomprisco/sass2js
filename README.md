@@ -31,10 +31,8 @@ The library will output:
 ## Programmatic usage
 
 ```javascript
-import sass2js from 'sass2js';
+import sass2js from 'sass2js'; // returns Promise<object>
 
 const scss = '...' // scss string, require using fs?
-sass2js(scss, (result: object) => {
-    // object {varName: '#000'}
-});
+sass2js(scss).then(console.log); // object {varName: '#000'}
 ```
