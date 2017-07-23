@@ -27,3 +27,14 @@ The library will output:
     "primary": "#1a1a1a"
 }
 ```
+
+## Programmatic usage
+
+```javascript
+import sass2js from 'sass2js';
+
+const scss = '...' // scss string, require using fs?
+sass2js(scss, (result: object) => {
+    // object {varName: '#000'}
+});
+```

@@ -7,28 +7,11 @@ import { cleanValue, isTruthy, split } from './helpers';
 import extract from './extractor';
 
 /**
- * @name loader
- * @description enables webpack to require files using sass2js
- * @param source
- */
-export = function loader(this: loader.LoaderContext, source: string) : void {
-    this.cacheable && this.cacheable();
-
-    const callback = this.async();
-
-    sass2js(source, (value: object) => {
-        const result = getExportString.call(this, value);
-
-        callback(null, result);
-    });
-}
-
-/**
  * @name sass2js
  * @param source 
  * @param callback 
  */
-function sass2js(source: string, callback: (value: object) => void): void {
+export default function sass2js(source: string, callback: (value: object) => void): void {
     const extracted = extract(source);
 
     compileToSass(extracted, (compiled: CompiledSassResult) => {
@@ -48,15 +31,4 @@ function sass2js(source: string, callback: (value: object) => void): void {
 
         callback(result);
     });
-}
-
-/**
- * @name getExportString
- * @param result 
- */
-function getExportString(this: loader.LoaderContext, result: object): string {
-    const version = +this.version;
-    const value = JSON.stringify(result);
-
-    return version >= 2 ? `export default ${value};` : `module.exports = ${value};`;
 }

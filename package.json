@@ -2,6 +2,9 @@
   "name": "sass2js",
   "description": "Export SASS variables to a Javascript object",
   "version": "0.0.1",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
   "dependencies": {
     "camelcase": "^4.1.0",
     "sass-import-resolve": "^1.0.9",
