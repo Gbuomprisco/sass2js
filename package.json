@@ -1,0 +1,16 @@
+{
+  "name": "sass2js",
+  "description": "Export SASS variables to a Javascript object",
+  "version": "0.0.1",
+  "dependencies": {
+    "camelcase": "^4.1.0",
+    "sass-import-resolve": "^1.0.9",
+    "sass.js": "^0.10.5"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.14",
+    "@types/webpack": "^3.0.4",
+    "typescript": "^2.4.1"
+  },
+  "main": "dist/index.js"
+}

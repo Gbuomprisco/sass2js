@@ -1,0 +1,7 @@
+dist
+node_modules
+
+// scss files for debugging
+a.scss
+c.scss
+src/scss.ts

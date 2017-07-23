@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2015",
+    "sourceMap": true,
+    "outDir": "dist",
+    "types": [
+      "node",
+      "webpack"
+    ]
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules"
+  ]
+}
