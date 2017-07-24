@@ -20,7 +20,7 @@ export const mapToProp = (line: string): object | undefined => {
 };
 
 export const reducePropObject = (acc: object, value: object): object => ({...acc, ...value});
-export const processSass = (source: string): object | undefined =>
+export const transformSassToObject = (source: string): object | undefined =>
     split(source)
         .map(mapToProp)
         .filter(isTruthy)
