@@ -3,7 +3,9 @@
   "description": "Export SASS variables to a Javascript object",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
     "camelcase": "^4.1.0",
@@ -12,8 +14,11 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
-    "@types/webpack": "^3.0.4",
     "typescript": "^2.4.1"
   },
-  "main": "dist/index.js"
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }

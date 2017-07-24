@@ -4,19 +4,6 @@ import resolve = require('sass-import-resolve');
 import { readFileSync, existsSync } from 'fs';
 
 /**
- * @name resolveImports
- * @param source 
- */
-function resolveImports(source: string): string {  
-    return resolve('file.scss', source)
-        .map((path: string) => path.replace(/\\/g, ''))
-        .map(openFile)
-        .filter(isTruthy)
-        .map(resolveImports)
-        .reduce((acc: string, curr: string) => `${curr}\n${acc}`, source);
-}
-
-/**
  * @param source 
  */
 export default function(source: string): string {
@@ -33,6 +20,19 @@ export default function(source: string): string {
         .map(mapper)
         .filter(isTruthy)
         .reduce(reducer, '');
+}
+
+/**
+ * @name resolveImports
+ * @param source
+ */
+function resolveImports(source: string): string {
+    return resolve('file.scss', source)
+        .map((path: string) => path.replace(/\\/g, ''))
+        .map(openFile)
+        .filter(isTruthy)
+        .map(resolveImports)
+        .reduce((acc: string, curr: string) => `${curr}\n${acc}`, source);
 }
 
 /**
