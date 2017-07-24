@@ -1,12 +1,10 @@
-import { compileToSass } from './compile';
-import { processSass } from './helpers';
+import compile from './compile';
 import extract from './extractor';
 
-/**
- * @param source
- */
-export default async function(source: string): Promise<object | undefined> {
-    const sass = await compileToSass(extract(source));
+import { processSass } from './helpers';
+
+export = async function(source: string): Promise<object | undefined> {
+    const sass = await compile(extract(source));
 
     try {
         return processSass(sass);

@@ -2,7 +2,8 @@ dist
 node_modules
 .idea
 
-// scss files for debugging
+// scss and ts files for debugging
 a.scss
 c.scss
 src/scss.ts
+demo.ts

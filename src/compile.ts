@@ -6,10 +6,9 @@ Sass.options({
 });
 
 /**
- * @name compileToSass
  * @param content
  */
-export function compileToSass(content: string): Promise<string> {
+export default function(content: string): Promise<string> {
     const promise = (resolve: (param: string) => void, reject: (param: string) => void) => {
         Sass.compile(content, (result: CompiledSassResult) => {
             if (result.status === 1) {
