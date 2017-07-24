@@ -9,7 +9,10 @@
     "outDir": "dist",
     "types": [
       "node",
-      "webpack"
+      "jasmine"
+    ],
+    "lib": [
+      "es2015"
     ]
   },
   "include": ["src"],

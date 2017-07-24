@@ -5,7 +5,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf ./dist",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run clean && npm run build",
+    "ts": "./node_modules/.bin/ts-node",
+    "jasmine": "npm run ts -- ./node_modules/.bin/jasmine --config=./tests/jasmine.json"
   },
   "dependencies": {
     "camelcase": "^4.1.0",
@@ -14,7 +16,11 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
-    "typescript": "^2.4.1"
+    "@types/jasmine": "^2.5.53",
+    "typescript": "^2.4.1",
+    "ts-node": "^3.2.1",
+    "jasmine": "^2.6.0",
+    "jasmine-spec-reporter": "^4.1.1"
   },
   "main": "dist/index.js",
   "files": [
