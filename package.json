@@ -3,7 +3,11 @@
   "description": "Export SASS variables to a Javascript object",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf ./dist",
+    "prepublish": "npm run clean && npm run build",
+    "ts": "./node_modules/.bin/ts-node",
+    "jasmine": "npm run ts -- ./node_modules/.bin/jasmine --config=./tests/jasmine.json"
   },
   "dependencies": {
     "camelcase": "^4.1.0",
@@ -12,8 +16,15 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
-    "@types/webpack": "^3.0.4",
-    "typescript": "^2.4.1"
+    "@types/jasmine": "^2.5.53",
+    "typescript": "^2.4.1",
+    "ts-node": "^3.2.1",
+    "jasmine": "^2.6.0",
+    "jasmine-spec-reporter": "^4.1.1"
   },
-  "main": "dist/index.js"
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }
