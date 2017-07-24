@@ -1,10 +1,4 @@
-import * as Sass from 'sass.js';
-
-export declare interface CompiledSassResult {
-    text: string;
-    status: number;
-    formatted: string;
-}
+import Sass = require('sass.js');
 
 Sass.options({
     indentedSyntax: true,
@@ -13,18 +7,18 @@ Sass.options({
 
 /**
  * @name compileToSass
- * @param scss
+ * @param content
  */
-export function compileToSass(scss: string): Promise<string> {
-    const promise = (resolve, reject) => {
-        Sass.compile(scss, (result: CompiledSassResult) => {
-             if (result.status === 1) {
+export function compileToSass(content: string): Promise<string> {
+    const promise = (resolve: (param: string) => void, reject: (param: string) => void) => {
+        Sass.compile(content, (result: CompiledSassResult) => {
+            if (result.status === 1) {
                 reject(result.formatted);
+            } else {
+                resolve(result.text);
             }
-
-            resolve(result.text);
         });
     };
 
     return new Promise(promise);
-};
+}

@@ -3,6 +3,9 @@
     "module": "commonjs",
     "target": "es2015",
     "sourceMap": true,
+    "noEmitOnError": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "outDir": "dist",
     "types": [
       "node",

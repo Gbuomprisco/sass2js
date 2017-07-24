@@ -1,19 +1,15 @@
-import { compileToSass, CompiledSassResult } from './compile';
-import { mapToProp, reducePropObject, split } from './helpers';
+import { compileToSass } from './compile';
+import { processSass } from './helpers';
 import extract from './extractor';
 
 /**
- * @param source 
- * @param callback 
+ * @param source
  */
-export default async function(source: string): Promise<object> {
+export default async function(source: string): Promise<object | undefined> {
+    const sass = await compileToSass(extract(source));
+
     try {
-        const styles = await compileToSass(extract(source));
-
-        return split(styles)
-            .map(mapToProp)
-            .reduce(reducePropObject);
-
+        return processSass(sass);
     } catch(e) {
         throw new Error(e);
     }

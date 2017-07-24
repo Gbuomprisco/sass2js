@@ -1,5 +1,6 @@
 dist
 node_modules
+.idea
 
 // scss files for debugging
 a.scss
