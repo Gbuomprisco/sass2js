@@ -1,9 +1,8 @@
 # sass2js
 
-Require any `.scss` file and extract all the variables contained. 
-Webpack loader will be provided in another package.
+Require any `.scss` file and extract all the variables contained. You can find the [webpack loader here](https://github.com/Gbuomprisco/sass2js-loader).
 
-**Work in progress, usage not recommended**
+**Work in progress, production usage not recommended**
 
 ## Install
 
