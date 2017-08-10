@@ -8,8 +8,10 @@ declare interface ISass {
     options: (options: object) => void;
     compile: (content: string, callback: (content: CompiledSassResult) => void) => void;
     style: {
-        compact: boolean;
+        compact?: boolean;
+        expanded?: boolean;
     }
+    importer: (callback: (request: any) => any) => void;
 }
 
 declare const Sass: ISass;

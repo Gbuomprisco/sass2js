@@ -1,8 +1,8 @@
-import undefined from './extract';
 import { cleanDefault, isTruthy, split } from './helpers';
-import { REGEX, MAP_REGEX, MAP_LINE_REGEX } from './regexes';
-import resolve = require('sass-import-resolve');
+import { REGEX, MAP_REGEX, MAP_LINE_REGEX, IMPORTS_REGEX } from './regexes';
+import resolver = require('sass-import-resolve');
 import { readFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 
 const MAP = 'MAP';
 const VARIABLE = 'VARIABLE';
@@ -20,11 +20,15 @@ interface VariableType {
 /**
  * @param source 
  */
-export default function(source: string): string {
-    return split(resolveImports(source))
-        .map(mapToVariableType)
+export default async function(source: string): Promise<string> {
+    const imports = resolveImports(source);
+    const styles = split(imports)
+        .map(mapToType)
+        .filter(isTruthy)
         .reduce(transformMaps, [])
         .reduce(reduceSelectors, '');
+
+    return styles;
 }
 
 /**
@@ -36,25 +40,29 @@ function transformMaps(acc: VariableType[], variable: VariableType): VariableTyp
     const defaulted = [...acc, variable];
 
     const maps = acc.filter(v => {
-        return v.type === MAP && v.matches.name !== ');';
+        return v.type === MAP;
     }) as VariableType[];
 
-    if (variable.type === VARIABLE || !maps.length) {
+    const map = maps[maps.length - 1];
+
+    if (variable.type === VARIABLE || !maps.length || !map) {
         return defaulted;
     }
+    
+    const concatenate = map.matches.value.trim().endsWith(');');
+    const value = concatenate === false ?
+        map.matches.value + '\n' + variable.matches.value : variable.matches.value;
 
-    const map = maps[maps.length - 1];
-    const value = map.matches.name + '\n' + variable.matches.name;
-
-    const concatenated = {
-        ...map,
+    const newMap = {
+        type: MAP,
         matches: {
             name: value,
             value
         }
-    };
+    } as VariableType;
 
-    return acc.map(value => value === map ? concatenated : value);
+    return concatenate ? [...acc, newMap] : 
+        acc.map(value => value === map ? newMap : value);
 }
 
 /**
@@ -78,9 +86,10 @@ function mapReducer(acc: string, match: VariableType): string {
         return acc;
     }
 
-    const initial = match.matches.value.replace(/\n/g, '') + '\n';
+    const initial = match.matches.value;
     const map = extracted[2];
-    const mapName = extracted[1].slice(1, Infinity);
+    const clean = (name: string): string => name.slice(1, Infinity);
+    const mapName = clean(extracted[1]);
 
     const values = map ? map
         .trim()
@@ -94,7 +103,7 @@ function mapReducer(acc: string, match: VariableType): string {
 
             return acc + createSelector(name, match.value);
         }, initial) : undefined;
-
+        
     return values ? acc + values : acc;
 }
 
@@ -109,27 +118,44 @@ function reduceSelectors(acc: string, match: VariableType): string {
         case MAP: return mapReducer(acc, match);
         default: return acc;
     }
-};
+}
 
 /**
- * @name mapToVariableType
+ * @name mapToType
  * @param line 
  */
-function mapToVariableType(line: string): VariableType {
-    const matches = line.match(REGEX);
-    const type: MatchType = matches ? VARIABLE : MAP;
+function mapToType(line: string): VariableType | undefined {
+    if (line.match(IMPORTS_REGEX)) {
+        return;
+    }
 
-    return matches ? {
-        type,
-        matches: {
-            name: matches[1],
-            value: cleanDefault(matches[2])
-        }
-    } : {
-        type,
+    const matches = line.match(REGEX);
+
+    return matches ? createVariableType(matches) : createMapType(line.trim());
+}
+
+function createMapType(line: string): VariableType {
+    if (line[0] !== ')' && line[0] !== '$') {
+        line = '\t' + line;
+    } else {
+        line = line + '\n';
+    }
+
+    return {
+        type: MAP,
         matches: {
             name: line,
             value: line
+        }
+    };
+}
+
+function createVariableType(matches: RegExpMatchArray): VariableType {
+    return {
+        type: VARIABLE,
+        matches: {
+            name: matches[1],
+            value: cleanDefault(matches[2])
         }
     };
 }
@@ -139,7 +165,7 @@ function mapToVariableType(line: string): VariableType {
  * @param source
  */
 function resolveImports(source: string): string {
-    return resolve('file.scss', source)
+    return resolver('file.scss', source)
         .map((path: string) => path.replace(/\\/g, ''))
         .map(openFile)
         .filter(isTruthy)
@@ -153,13 +179,13 @@ function resolveImports(source: string): string {
  * @param value 
  */
 function createSelector(name: string, value: string, prefix = '$'): string {
-    return `${prefix}${name}: ${value};\n.${name}-selector {prop: ${value}}\n`;
+    return `${prefix}${name}: ${value};\n.${name}-selector {\n\tprop:${value.trim()}\n}\n\n`;
 }
 
 /**
  * @name openFile
- * @param path
+ * @param file
  */
-function openFile(path: string): string {
-    return existsSync(path) ? readFileSync(path, {encoding : 'utf8'}) : '';
+function openFile(file: string): string {
+    return existsSync(file) ? readFileSync(file, {encoding : 'utf8'}) : '';
 }

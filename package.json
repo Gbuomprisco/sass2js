@@ -10,6 +10,7 @@
     "jasmine": "npm run ts -- ./node_modules/.bin/jasmine --config=./tests/jasmine.json"
   },
   "dependencies": {
+    "caller-callsite": "^2.0.0",
     "camelcase": "^4.1.0",
     "sass-import-resolve": "^1.0.9",
     "sass.js": "^0.10.5"

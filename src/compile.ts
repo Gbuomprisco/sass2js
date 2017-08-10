@@ -1,7 +1,7 @@
+import { request } from 'http';
 import Sass = require('sass.js');
 
 Sass.options({
-    indentedSyntax: true,
     style: Sass.style.compact
 });
 

@@ -3,7 +3,7 @@
 Require any `.scss` file and extract all the variables contained. 
 Webpack loader will be provided in another package.
 
-**Work in progress, usage not recommended**
+**Work in progress, many variants are not working, so usage is not recommended**
 
 ## Install
 

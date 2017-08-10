@@ -1,0 +1,7 @@
+@import "./mocks/basic";
+@import "./mocks/maps";
+$a: 3;
+$mappa: (
+    value: map-get($map, b),
+    value2: 3px
+);

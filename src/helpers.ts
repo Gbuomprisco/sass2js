@@ -3,7 +3,7 @@ import { SELECTOR_REGEX, PROP_REGEX, MAP_SELECTOR_REGEX } from './regexes';
 
 export const isTruthy = <T>(val: T): boolean => Boolean(val);
 export const split = (source: string): string[] => source.split('\n').filter(isTruthy);
-export const cleanValue = (prop: string): string => prop.replace(';', '');
+export const cleanValue = (prop: string): string => prop.replace(';', '').trim();
 export const cleanDefault = (prop: string): string => prop.replace('!default', '');
 
 /**
@@ -45,6 +45,7 @@ const merge = (
 
     return keys
         .filter((key: string) => target.hasOwnProperty(key))
+        .filter((key: string) => typeof target[key] !== 'string')
         .map((key: string): object => {
             const source = value[key] as object;
             const second = target[key] as object;
@@ -77,4 +78,4 @@ export const transformSassToObject = (source: string): object | undefined =>
     split(source)
         .map(mapToProp)
         .filter(isTruthy)
-        .reduce(reducePropObject);
+        .reduce(reducePropObject, {});

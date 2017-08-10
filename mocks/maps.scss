@@ -1,0 +1,5 @@
+$i: 3px;
+$map: (
+    b: $i
+);
+$f: map-get($map, b);
