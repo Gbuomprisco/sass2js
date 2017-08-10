@@ -19,6 +19,10 @@
     "email": "giancarlopsk@gmail.com",
     "name": "Giancarlo Buomprisco"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gbuomprisco/sass2js.git"
+  },
   "devDependencies": {
     "@types/node": "^8.0.14",
     "@types/jasmine": "^2.5.53",
